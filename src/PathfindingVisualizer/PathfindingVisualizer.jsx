@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Node from "./Node/Node";
-import "./Node/Node.css";
 import "./PathfindingVisualizer.css";
 import { dijkstra, getNodesInShortestPath } from "../algorithms/dijkstras.jsx";
 
@@ -38,25 +37,36 @@ export default class PathfindingVisualizer extends Component {
   }
 
   animateDijkstra(visitedNodes, nodesInShortestPath) {
-    for (let i = 0; i <= visitedNodes.length; i++) {
-      if (i === visitedNodes.length) {
+    //Skip the first and last node in animation
+    //i.e. the start and end node
+    const nodesToAnimate = visitedNodes.slice(1, visitedNodes.length - 1);
+
+    for (let i = 0; i <= nodesToAnimate.length; i++) {
+      if (i === nodesToAnimate.length) {
         setTimeout(() => {
           this.animateShortestPath(nodesInShortestPath);
         }, PATHFINDING_ANIMATION_SPEED * i);
         return;
       }
       setTimeout(() => {
-        const node = visitedNodes[i];
+        const node = nodesToAnimate[i];
         document.getElementById(`node-${node.row}-${node.col}`).className =
           "node node-visited";
       }, PATHFINDING_ANIMATION_SPEED * i);
     }
   }
 
-  animateShortestPath(nodesInShortestPathOrder) {
-    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+  animateShortestPath(nodesInShortestPath) {
+    //Skip the first and last node in animation
+    //i.e. the start and end node
+    const nodesToAnimate = nodesInShortestPath.slice(
+      1,
+      nodesInShortestPath.length - 1
+    );
+
+    for (let i = 0; i < nodesToAnimate.length; i++) {
       setTimeout(() => {
-        const node = nodesInShortestPathOrder[i];
+        const node = nodesToAnimate[i];
         document.getElementById(`node-${node.row}-${node.col}`).className =
           "node node-shortest-path";
       }, SHORTEST_PATH_ANIMATION_SPEED * i);
@@ -97,7 +107,6 @@ export default class PathfindingVisualizer extends Component {
       return;
     const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
     this.setState({ grid: newGrid, mouseIsPressed: true });
-    // this.setState({ mouseIsPressed: true });
   }
 
   handleMouseUp() {
@@ -122,6 +131,21 @@ export default class PathfindingVisualizer extends Component {
     const { grid, mouseIsPressed } = this.state;
     return (
       <>
+        <div class="header">
+          <p>Pathfinding Visualizer</p>
+          <a href="#news">Placeholder</a>
+          <div class="dropdown">
+            <button class="dropbtn">Dropdown</button>
+            <div class="dropdown-content">
+              <a href="#">Link 1</a>
+              <a href="#">Link 2</a>
+              <a href="#">Link 3</a>
+            </div>
+          </div>
+          <button class="visualizebtn" onClick={() => this.visualizeDijkstra()}>
+            Visualize!
+          </button>
+        </div>
         <button onClick={() => this.visualizeDijkstra()}>
           Visualize Dijkstra's Algorithm
         </button>
@@ -191,11 +215,5 @@ const getNewGridWithWallToggled = (grid, row, col) => {
     isRecentChange: true,
   };
   newGrid[row][col] = newNode;
-  // if (node.isWall)
-  //   document.getElementById(`node-${node.row}-${node.col}`).className = "node";
-  // else
-  //   document.getElementById(`node-${node.row}-${node.col}`).className =
-  //     "node wall-node";
-
   return newGrid;
 };

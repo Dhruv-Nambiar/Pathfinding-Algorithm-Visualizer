@@ -1,0 +1,140 @@
+@font-face {
+  font-family: "BebasNeueBold";
+  src: URL("./fonts/BebasNeue/BebasNeue-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "BebasNeue";
+  src: URL("./fonts/BebasNeue/BebasNeue-Regular.ttf") format("truetype");
+}
+
+body {
+  font-family: Noto Sans, Arial, sans-serif;
+  padding: 0px;
+  margin: 0px;
+}
+
+.square-grid {
+  margin: auto;
+  /* position: center; */
+  --columns: 20;
+  display: grid;
+  /* grid-auto-rows: 20px; */
+  --content-width: 1000px;
+  width: var(--content-width);
+  /* width: calc(var(grid-auto-rows) * var(--columns) * 1px); */
+  grid-template-columns: repeat(var(--columns), 1fr);
+  --row-size: calc((var(--content-width)) / var(--columns));
+  grid-auto-rows: var(--row-size);
+  /* grid-auto-rows: 60px; */
+  /* width: 180px; */
+  /* grid-column-gap: 0px; */
+  /* grid-row-gap: 0px; */
+}
+
+/* Navbar container */
+.header {
+  overflow: hidden;
+  font-family: BebasNeueBold;
+  font-weight: bold;
+  background-color: rgb(10, 62, 84);
+  height: 80px;
+  line-height: 90px;
+}
+
+/* Generic links inside the navbar */
+.header a {
+  float: left;
+  font-size: 24px;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+/* Project name  */
+.header p {
+  float: left;
+  font-size: 40px;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  margin-left: 30px;
+  margin-right: 30px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* The dropdown container */
+.dropdown {
+  float: left;
+  overflow: hidden;
+  margin-top: 3px;
+}
+
+/* Dropdown button */
+.dropdown .dropbtn {
+  font-weight: bold;
+  font-family: BebasNeueBold;
+  font-size: 24px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 0px 0px;
+  background-color: inherit;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.visualizebtn {
+  float: left;
+  font-size: 30px;
+  font-family: BebasNeue;
+  color: white;
+  background-color: rgb(50, 197, 119);
+  outline: 1px solid rgb(45, 174, 105);
+  text-align: center;
+  text-decoration: none;
+  margin-left: 30px;
+  margin-right: 30px;
+  margin-top: 24px;
+  border-radius: 8px;
+  padding-top: 5px;
+}
+
+/* Add a red background color to navbar links on hover */
+/* .header a:hover,
+.dropdown:hover .dropbtn {
+  background-color: red;
+} */
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  float: none;
+  margin: 0;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+/* Add a grey background color to dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
