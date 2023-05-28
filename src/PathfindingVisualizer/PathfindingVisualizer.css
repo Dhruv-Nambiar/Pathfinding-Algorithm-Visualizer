@@ -86,7 +86,24 @@ body {
   margin-right: 20px;
 }
 
-.visualizebtn {
+/* Regular buttons */
+.regularbtn {
+  float: left;
+  font-weight: bold;
+  font-family: BebasNeueBold;
+  font-size: 24px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 0px 0px;
+  background-color: inherit;
+  /* margin-top: 24px; */
+  line-height: inherit;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+/* .visualizebtn {
   float: left;
   font-size: 30px;
   font-family: BebasNeue;
@@ -100,7 +117,7 @@ body {
   margin-top: 24px;
   border-radius: 8px;
   padding-top: 5px;
-}
+} */
 
 /* Add a red background color to navbar links on hover */
 /* .header a:hover,
@@ -137,4 +154,62 @@ body {
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+.visualizebtn {
+  line-height: normal;
+  float: left;
+  border: none;
+  color: white;
+  font-family: BebasNeue;
+  padding: 8px 24px 0px;
+  font-weight: bold;
+  font-size: 36px;
+  text-align: center;
+  text-decoration: none;
+  background-color: #23d57c;
+  /* display: block; */
+  position: relative;
+  /* padding: 20px 40px; */
+
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  /* text-shadow: 0px 1px 0px #000; */
+  filter: dropshadow(color=#000, offx=0px, offy=1px);
+
+  -webkit-box-shadow: inset 0 1px 0 #d0ffc4, 0 6px 0 #009155;
+  -moz-box-shadow: inset 0 1px 0 #d0ffc4, 0 6px 0 #009155;
+  box-shadow: inset 0 1px 0 #d0ffc4, 0 6px 0 #009155;
+
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  margin-top: 18px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.visualizebtn:active {
+  border: none;
+  top: 6px;
+  background-color: #01a257;
+  color: rgb(225, 224, 224);
+  -webkit-box-shadow: inset 0 1px 0 #c4ffc4, inset 0 -3px 0 #009155;
+  -moz-box-shadow: inset 0 1px 0 #c4ffc4, inset 0 -3pxpx 0 #009155;
+  box-shadow: inset 0 1px 0 #c4ffc4, inset 0 -3px 0 #009155;
+}
+
+.visualizebtn:after {
+  border: none;
+  content: "";
+  height: 100%;
+  width: 100%;
+  padding: 4px;
+  position: absolute;
+  bottom: -15px;
+  left: -4px;
+  z-index: -1;
+  background-color: #002b20;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
