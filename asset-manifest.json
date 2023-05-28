@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/pathfinding-algorithm-visualizer/static/css/main.b2511fa3.css",
-    "main.js": "/pathfinding-algorithm-visualizer/static/js/main.d984e67a.js",
+    "main.css": "/pathfinding-algorithm-visualizer/static/css/main.c41d43a7.css",
+    "main.js": "/pathfinding-algorithm-visualizer/static/js/main.9323db7d.js",
     "static/js/787.ef103b65.chunk.js": "/pathfinding-algorithm-visualizer/static/js/787.ef103b65.chunk.js",
     "static/media/BebasNeue-Regular.ttf": "/pathfinding-algorithm-visualizer/static/media/BebasNeue-Regular.7d2f1e3c43251f14336c.ttf",
     "static/media/BebasNeue-Bold.ttf": "/pathfinding-algorithm-visualizer/static/media/BebasNeue-Bold.0fff693ee8f49e3b60f2.ttf",
     "index.html": "/pathfinding-algorithm-visualizer/index.html",
-    "main.b2511fa3.css.map": "/pathfinding-algorithm-visualizer/static/css/main.b2511fa3.css.map",
-    "main.d984e67a.js.map": "/pathfinding-algorithm-visualizer/static/js/main.d984e67a.js.map",
+    "main.c41d43a7.css.map": "/pathfinding-algorithm-visualizer/static/css/main.c41d43a7.css.map",
+    "main.9323db7d.js.map": "/pathfinding-algorithm-visualizer/static/js/main.9323db7d.js.map",
     "787.ef103b65.chunk.js.map": "/pathfinding-algorithm-visualizer/static/js/787.ef103b65.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.b2511fa3.css",
-    "static/js/main.d984e67a.js"
+    "static/css/main.c41d43a7.css",
+    "static/js/main.9323db7d.js"
   ]
 }
