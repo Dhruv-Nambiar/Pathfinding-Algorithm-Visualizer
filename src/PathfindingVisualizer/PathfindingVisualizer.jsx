@@ -268,7 +268,7 @@ export default class PathfindingVisualizer extends Component {
             New Maze
           </button>
         </div>
-        <div className="square-grid">
+        <div className="square-grid" style={{ "--columns": `${GRID_COLS}` }}>
           {grid.map((row, rowIdx) => {
             return row.map((node, nodeIdx) => {
               const { row, col, isStart, isEnd, isWall } = node;
