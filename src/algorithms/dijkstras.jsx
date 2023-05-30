@@ -5,13 +5,14 @@ export function dijkstra(grid, startNode, endNode) {
   while (!!unvisitedNodes.length) {
     sortNodes(unvisitedNodes);
     const closestNode = unvisitedNodes.shift();
+    console.log(closestNode);
+    // If the closest node is at a distance of infinity,
+    // we must be trapped and should therefore stop.
+    if (closestNode.distance === Infinity) return visitedNodes;
 
     // If we encounter a wall, we skip it.
     if (closestNode.isWall) continue;
 
-    // If the closest node is at a distance of infinity,
-    // we must be trapped and should therefore stop.
-    if (closestNode.distance === Infinity) return visitedNodes;
     closestNode.isVisited = true;
     visitedNodes.push(closestNode);
     if (closestNode === endNode) return visitedNodes;

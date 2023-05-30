@@ -25,6 +25,10 @@
   background-color: green;
 }
 
+.current-node {
+  background-color: rgb(255, 254, 106);
+}
+
 .wall-node {
   animation-name: wallAnimation;
   animation-duration: 0.3s;
@@ -34,6 +38,10 @@
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
   animation-play-state: running;
+}
+
+.wall-node .slow-anim {
+  animation-duration: 0.3s !important;
 }
 
 @keyframes wallAnimation {
@@ -84,10 +92,6 @@
     transform: scale(1);
     background-color: rgba(0, 190, 218, 0.75);
   }
-}
-
-.node-wall {
-  background-color: rgb(12, 53, 71);
 }
 
 .node-shortest-path {

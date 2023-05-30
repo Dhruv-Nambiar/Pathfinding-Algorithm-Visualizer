@@ -2,15 +2,17 @@ import React, { Component } from "react";
 import Node from "./Node/Node";
 import "./PathfindingVisualizer.css";
 import { dijkstra, getNodesInShortestPath } from "../algorithms/dijkstras.jsx";
+import { DFSmaze } from "../algorithms/DFSmaze.jsx";
 
-let GRID_ROWS = 13;
-let GRID_COLS = 20;
-const START_NODE_ROW = 6;
-const START_NODE_COL = 4;
-const END_NODE_ROW = 6;
-const END_NODE_COL = 16;
+let GRID_ROWS = 15;
+let GRID_COLS = 23;
+const START_NODE_ROW = 7;
+const START_NODE_COL = 3;
+const END_NODE_ROW = 7;
+const END_NODE_COL = 19;
 const PATHFINDING_ANIMATION_SPEED = 20;
 const SHORTEST_PATH_ANIMATION_SPEED = 80;
+const MAZE_GENERATION_ANIMATION_SPEED = 20;
 
 export default class PathfindingVisualizer extends Component {
   constructor(props) {
@@ -28,18 +30,15 @@ export default class PathfindingVisualizer extends Component {
     window.addEventListener("mouseup", () => {
       this.setState({ mouseIsPressed: false });
     });
-    // const viewportWidth = window.innerWidth;
-    // GRID_COLS = viewportWidth / 20;
-    // const viewportHeight = window.innerHeight;
-    // GRID_ROWS = viewportHeight / 20;
     const grid = getInitialGrid();
     this.setState({ grid });
   }
 
   animateDijkstra(visitedNodes, nodesInShortestPath) {
-    //Skip the first and last node in animation
-    //i.e. the start and end node
-    const nodesToAnimate = visitedNodes.slice(1, visitedNodes.length - 1);
+    //Always skip start node in animation
+    let nodesToAnimate = visitedNodes.slice(1, visitedNodes.length);
+    //If there is a path to the end-node, don't animate the end-node
+    if (nodesInShortestPath.length !== 1) nodesToAnimate.pop();
 
     for (let i = 0; i <= nodesToAnimate.length; i++) {
       if (i === nodesToAnimate.length) {
@@ -74,30 +73,112 @@ export default class PathfindingVisualizer extends Component {
   }
 
   visualizeDijkstra() {
+    this.softReset();
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const endNode = grid[END_NODE_ROW][END_NODE_COL];
     const visitedNodes = dijkstra(grid, startNode, endNode);
+    if (visitedNodes.length === 1) return;
     const nodesInShortestPath = getNodesInShortestPath(endNode);
     this.animateDijkstra(visitedNodes, nodesInShortestPath);
   }
 
-  reset() {
-    for (let row = 0; row < GRID_ROWS; row++) {
-      for (let col = 0; col < GRID_COLS; col++) {
-        if (row === START_NODE_ROW && col === START_NODE_COL) {
-          document.getElementById(`node-${row}-${col}`).className =
-            "node start-node";
-        } else if (row === END_NODE_ROW && col === END_NODE_COL) {
-          document.getElementById(`node-${row}-${col}`).className =
-            "node end-node";
-        } else {
-          document.getElementById(`node-${row}-${col}`).className = "node";
-        }
+  animateDFSMaze(visitedNodes) {
+    const newGrid = getNewGridWithOnlyWalls(this.state.grid);
+    this.setState({ grid: newGrid });
+    const wallDelay = 1500;
+    const nodesToAnimate = visitedNodes.slice();
+    for (let i = 1; i <= nodesToAnimate.length; i++) {
+      if (i === nodesToAnimate.length) {
+        setTimeout(() => {
+          for (let i = 1; i < nodesToAnimate.length; i++) {
+            const nextNode = nodesToAnimate[i];
+            const prevNode = nextNode.previousNode;
+            const midNode =
+              newGrid[(nextNode.row + prevNode.row) / 2][
+                (nextNode.col + prevNode.col) / 2
+              ];
+            const newMidNode = {
+              ...midNode,
+              isWall: false,
+            };
+            const newNextNode = {
+              ...nextNode,
+              isWall: false,
+            };
+            newGrid[midNode.row][midNode.col] = newMidNode;
+            newGrid[nextNode.row][nextNode.col] = newNextNode;
+          }
+        }, PATHFINDING_ANIMATION_SPEED * i + wallDelay);
+        return;
       }
+      setTimeout(() => {
+        if (i > 1) {
+          const lastIterationNextNode = nodesToAnimate[i - 1];
+          const lastIterationPrevNode = lastIterationNextNode.previousNode;
+          const lastIterationMidNode = getMiddleNode(
+            newGrid,
+            lastIterationNextNode,
+            lastIterationPrevNode
+          );
+          document.getElementById(
+            `node-${lastIterationMidNode.row}-${lastIterationMidNode.col}`
+          ).className = "node";
+          if (
+            lastIterationNextNode.row !== END_NODE_ROW ||
+            lastIterationNextNode.col !== END_NODE_COL
+          )
+            document.getElementById(
+              `node-${lastIterationNextNode.row}-${lastIterationNextNode.col}`
+            ).className = "node";
+        }
+        const nextNode = nodesToAnimate[i];
+        const prevNode = nextNode.previousNode;
+        const midNode = getMiddleNode(newGrid, nextNode, prevNode);
+        document.getElementById(
+          `node-${midNode.row}-${midNode.col}`
+        ).className = "node current-node";
+        if (nextNode.row !== END_NODE_ROW || nextNode.col !== END_NODE_COL)
+          document.getElementById(
+            `node-${nextNode.row}-${nextNode.col}`
+          ).className = "node current-node";
+      }, MAZE_GENERATION_ANIMATION_SPEED * i + wallDelay);
     }
+  }
+
+  generateDFSMaze() {
+    this.reset();
+    const { grid } = this.state;
+    const visitedNodes = DFSmaze(
+      grid,
+      grid[START_NODE_ROW][START_NODE_COL],
+      null
+    );
+    this.reset();
+    this.animateDFSMaze(visitedNodes);
+  }
+
+  reset() {
+    resetNodeClasses(document);
     const grid = getInitialGrid();
     this.setState({ grid });
+  }
+
+  //Resets previousNode and isVisited of all nodes
+  softReset() {
+    const newGrid = this.state.grid.slice();
+    for (let row = 0; row < GRID_ROWS; row++) {
+      for (let col = 0; col < GRID_COLS; col++) {
+        const node = newGrid[row][col];
+        const newNode = {
+          ...node,
+          previousNode: null,
+          isVisited: false,
+        };
+        newGrid[row][col] = newNode;
+      }
+    }
+    this.setState({ grid: newGrid });
   }
 
   handleMouseDown(row, col) {
@@ -127,13 +208,19 @@ export default class PathfindingVisualizer extends Component {
     this.setState({ mouseMode: str });
   }
 
+  debug() {
+    resetNodeAnimationClasses(document);
+  }
+
   render() {
     const { grid, mouseIsPressed } = this.state;
     return (
       <>
         <div class="header">
           <p>Pathfinding Visualizer</p>
-          <a href="#news">Placeholder</a>
+          <button class="regularbtn" onClick={() => this.debug()}>
+            Debug
+          </button>
           <div class="dropdown">
             <button class="dropbtn">Dropdown</button>
             <div class="dropdown-content">
@@ -148,16 +235,26 @@ export default class PathfindingVisualizer extends Component {
           <button class="regularbtn" onClick={() => this.reset()}>
             Reset
           </button>
-          <button class="regularbtn" onClick={() => this.visualizeDijkstra()}>
-            Visualize!
+          <button
+            class="regularbtn"
+            onClick={() => this.setMouseMode("pencil")}
+          >
+            Pencil
+          </button>
+          <button
+            class="regularbtn"
+            onClick={() => this.setMouseMode("eraser")}
+          >
+            Eraser
+          </button>
+          <button class="regularbtn" onClick={() => this.generateDFSMaze()}>
+            New Maze
           </button>
         </div>
-        <button onClick={() => this.setMouseMode("pencil")}>Pencil</button>
-        <button onClick={() => this.setMouseMode("eraser")}>Eraser</button>
         <div className="square-grid">
           {grid.map((row, rowIdx) => {
             return row.map((node, nodeIdx) => {
-              const { row, col, isStart, isEnd, isWall, isRecentChange } = node;
+              const { row, col, isStart, isEnd, isWall } = node;
               return (
                 <Node
                   key={nodeIdx}
@@ -166,7 +263,6 @@ export default class PathfindingVisualizer extends Component {
                   isStart={isStart}
                   isEnd={isEnd}
                   isWall={isWall}
-                  isRecentChange={isRecentChange}
                   mouseIsPressed={mouseIsPressed}
                   onMouseDown={(row, col) => this.handleMouseDown(row, col)}
                   onMouseUp={() => this.handleMouseUp()}
@@ -182,7 +278,6 @@ export default class PathfindingVisualizer extends Component {
 }
 
 const getInitialGrid = () => {
-  console.log(GRID_ROWS);
   const grid = [];
   for (let row = 0; row < GRID_ROWS; row++) {
     const currentRow = [];
@@ -191,6 +286,7 @@ const getInitialGrid = () => {
     }
     grid.push(currentRow);
   }
+
   return grid;
 };
 
@@ -203,7 +299,6 @@ const createNode = (col, row) => {
     distance: Infinity,
     isVisited: false,
     isWall: false,
-    isRecentChange: false,
     previousNode: null,
   };
 };
@@ -214,8 +309,60 @@ const getNewGridWithWallToggled = (grid, row, col) => {
   const newNode = {
     ...node,
     isWall: !node.isWall,
-    isRecentChange: true,
   };
   newGrid[row][col] = newNode;
   return newGrid;
+};
+
+const getNewGridWithOnlyWalls = (grid) => {
+  const newGrid = grid.slice();
+  for (let row = 0; row < GRID_ROWS; row++) {
+    for (let col = 0; col < GRID_COLS; col++) {
+      if (row === START_NODE_ROW && col === START_NODE_COL) continue;
+      if (row === END_NODE_ROW && col === END_NODE_COL) continue;
+      const node = newGrid[row][col];
+      const newNode = {
+        ...node,
+        isWall: true,
+        isVisited: false,
+      };
+      newGrid[row][col] = newNode;
+    }
+  }
+  return newGrid;
+};
+
+const getMiddleNode = (grid, nodeA, nodeB) => {
+  const middleNodeRow = nodeA.row / 2 + nodeB.row / 2;
+  const middleNodeCol = nodeA.col / 2 + nodeB.col / 2;
+  return grid[middleNodeRow][middleNodeCol];
+};
+
+const resetNodeClasses = (document) => {
+  for (let row = 0; row < GRID_ROWS; row++) {
+    for (let col = 0; col < GRID_COLS; col++) {
+      if (row === START_NODE_ROW && col === START_NODE_COL) {
+        document.getElementById(`node-${row}-${col}`).className =
+          "node start-node";
+      } else if (row === END_NODE_ROW && col === END_NODE_COL) {
+        document.getElementById(`node-${row}-${col}`).className =
+          "node end-node";
+      } else {
+        document.getElementById(`node-${row}-${col}`).className = "node";
+      }
+    }
+  }
+};
+
+const resetNodeAnimationClasses = (document) => {
+  for (let row = 0; row < GRID_ROWS; row++) {
+    for (let col = 0; col < GRID_COLS; col++) {
+      let className = document.getElementById(`node-${row}-${col}`).className;
+      className = className.replace(
+        /node-visited|current-node|node-shortest-path/,
+        ""
+      );
+      document.getElementById(`node-${row}-${col}`).className = className;
+    }
+  }
 };

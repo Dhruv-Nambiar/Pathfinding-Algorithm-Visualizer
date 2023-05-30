@@ -16,7 +16,7 @@ body {
 .square-grid {
   margin: auto;
   /* position: center; */
-  --columns: 20;
+  --columns: 23;
   display: grid;
   /* grid-auto-rows: 20px; */
   --content-width: 1000px;
@@ -33,12 +33,15 @@ body {
 
 /* Navbar container */
 .header {
-  overflow: hidden;
+  /* overflow: hidden; */
   font-family: BebasNeueBold;
   font-weight: bold;
   background-color: rgb(10, 62, 84);
   height: 80px;
   line-height: 90px;
+  display: flex;
+  overflow-x: auto;
+  position: relative;
 }
 
 /* Generic links inside the navbar */
@@ -103,28 +106,6 @@ body {
   margin-right: 20px;
 }
 
-/* .visualizebtn {
-  float: left;
-  font-size: 30px;
-  font-family: BebasNeue;
-  color: white;
-  background-color: rgb(50, 197, 119);
-  outline: 1px solid rgb(45, 174, 105);
-  text-align: center;
-  text-decoration: none;
-  margin-left: 30px;
-  margin-right: 30px;
-  margin-top: 24px;
-  border-radius: 8px;
-  padding-top: 5px;
-} */
-
-/* Add a red background color to navbar links on hover */
-/* .header a:hover,
-.dropdown:hover .dropbtn {
-  background-color: red;
-} */
-
 /* Dropdown content (hidden by default) */
 .dropdown-content {
   display: none;
@@ -170,6 +151,7 @@ body {
   background-color: #23d57c;
   /* display: block; */
   position: relative;
+  height: 60%;
   /* padding: 20px 40px; */
 
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -183,7 +165,7 @@ body {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
-  margin-top: 18px;
+  margin-top: 14px;
   margin-left: 20px;
   margin-right: 20px;
 }
