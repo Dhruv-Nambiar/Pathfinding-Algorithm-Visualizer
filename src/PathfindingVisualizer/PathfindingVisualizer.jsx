@@ -91,6 +91,23 @@ export default class PathfindingVisualizer extends Component {
     for (let i = 1; i <= nodesToAnimate.length; i++) {
       if (i === nodesToAnimate.length) {
         setTimeout(() => {
+          const lastIterationNextNode = nodesToAnimate[i - 1];
+          const lastIterationPrevNode = lastIterationNextNode.previousNode;
+          const lastIterationMidNode = getMiddleNode(
+            newGrid,
+            lastIterationNextNode,
+            lastIterationPrevNode
+          );
+          document.getElementById(
+            `node-${lastIterationMidNode.row}-${lastIterationMidNode.col}`
+          ).className = "node";
+          if (
+            lastIterationNextNode.row !== END_NODE_ROW ||
+            lastIterationNextNode.col !== END_NODE_COL
+          )
+            document.getElementById(
+              `node-${lastIterationNextNode.row}-${lastIterationNextNode.col}`
+            ).className = "node";
           for (let i = 1; i < nodesToAnimate.length; i++) {
             const nextNode = nodesToAnimate[i];
             const prevNode = nextNode.previousNode;
