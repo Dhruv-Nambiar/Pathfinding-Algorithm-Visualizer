@@ -6,13 +6,15 @@ import { DFSmaze } from "../algorithms/DFSmaze.jsx";
 
 let GRID_ROWS = 15;
 let GRID_COLS = 23;
+let CONTENT_WIDTH = "1000px";
 const START_NODE_ROW = 7;
 const START_NODE_COL = 3;
 const END_NODE_ROW = 7;
 const END_NODE_COL = 19;
 const PATHFINDING_ANIMATION_SPEED = 20;
-const SHORTEST_PATH_ANIMATION_SPEED = 80;
-const MAZE_GENERATION_ANIMATION_SPEED = 20;
+const SHORTEST_PATH_ANIMATION_SPEED = 70;
+const MAZE_GENERATION_ANIMATION_SPEED = 40;
+const MAZE_GENERATION_ANIMATION_DELAY = 1500;
 
 export default class PathfindingVisualizer extends Component {
   constructor(props) {
@@ -21,7 +23,10 @@ export default class PathfindingVisualizer extends Component {
       grid: [],
       mouseIsPressed: false,
       mouseMode: "pencil",
+      width: window.innerWidth,
+      height: window.innerHeight,
     };
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
   componentDidMount() {
     window.addEventListener("mousedown", () => {
@@ -32,6 +37,14 @@ export default class PathfindingVisualizer extends Component {
     });
     const grid = getInitialGrid();
     this.setState({ grid });
+    GRID_ROWS = Math.round(
+      (window.innerHeight * 0.75) / ((window.innerWidth * 0.75) / GRID_COLS)
+    );
+    window.addEventListener("resize", this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
   }
 
   animateDijkstra(visitedNodes, nodesInShortestPath) {
@@ -74,6 +87,7 @@ export default class PathfindingVisualizer extends Component {
 
   visualizeDijkstra() {
     this.softReset();
+    resetNodeAnimationClasses(document);
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const endNode = grid[END_NODE_ROW][END_NODE_COL];
@@ -86,28 +100,10 @@ export default class PathfindingVisualizer extends Component {
   animateDFSMaze(visitedNodes) {
     const newGrid = getNewGridWithOnlyWalls(this.state.grid);
     this.setState({ grid: newGrid });
-    const wallDelay = 1500;
     const nodesToAnimate = visitedNodes.slice();
     for (let i = 1; i <= nodesToAnimate.length; i++) {
       if (i === nodesToAnimate.length) {
         setTimeout(() => {
-          const lastIterationNextNode = nodesToAnimate[i - 1];
-          const lastIterationPrevNode = lastIterationNextNode.previousNode;
-          const lastIterationMidNode = getMiddleNode(
-            newGrid,
-            lastIterationNextNode,
-            lastIterationPrevNode
-          );
-          document.getElementById(
-            `node-${lastIterationMidNode.row}-${lastIterationMidNode.col}`
-          ).className = "node";
-          if (
-            lastIterationNextNode.row !== END_NODE_ROW ||
-            lastIterationNextNode.col !== END_NODE_COL
-          )
-            document.getElementById(
-              `node-${lastIterationNextNode.row}-${lastIterationNextNode.col}`
-            ).className = "node";
           for (let i = 1; i < nodesToAnimate.length; i++) {
             const nextNode = nodesToAnimate[i];
             const prevNode = nextNode.previousNode;
@@ -126,7 +122,7 @@ export default class PathfindingVisualizer extends Component {
             newGrid[midNode.row][midNode.col] = newMidNode;
             newGrid[nextNode.row][nextNode.col] = newNextNode;
           }
-        }, PATHFINDING_ANIMATION_SPEED * i + wallDelay);
+        }, PATHFINDING_ANIMATION_SPEED * i + MAZE_GENERATION_ANIMATION_DELAY);
         return;
       }
       setTimeout(() => {
@@ -159,7 +155,7 @@ export default class PathfindingVisualizer extends Component {
           document.getElementById(
             `node-${nextNode.row}-${nextNode.col}`
           ).className = "node current-node";
-      }, MAZE_GENERATION_ANIMATION_SPEED * i + wallDelay);
+      }, MAZE_GENERATION_ANIMATION_SPEED * i + MAZE_GENERATION_ANIMATION_DELAY);
     }
   }
 
@@ -227,10 +223,13 @@ export default class PathfindingVisualizer extends Component {
 
   debug() {
     resetNodeAnimationClasses(document);
+    console.log(this.state.width);
+    console.log(this.state.height);
   }
 
   render() {
     const { grid, mouseIsPressed } = this.state;
+
     return (
       <>
         <div class="header">
@@ -238,14 +237,6 @@ export default class PathfindingVisualizer extends Component {
           <button class="regularbtn" onClick={() => this.debug()}>
             Debug
           </button>
-          <div class="dropdown">
-            <button class="dropbtn">Dropdown</button>
-            <div class="dropdown-content">
-              <a href="#">Link 1</a>
-              <a href="#">Link 2</a>
-              <a href="#">Link 3</a>
-            </div>
-          </div>
           <button class="visualizebtn" onClick={() => this.visualizeDijkstra()}>
             Visualize
           </button>
@@ -267,8 +258,24 @@ export default class PathfindingVisualizer extends Component {
           <button class="regularbtn" onClick={() => this.generateDFSMaze()}>
             New Maze
           </button>
+          <div class="slidecontainer">
+            <input
+              type="range"
+              min="15"
+              max="31"
+              defaultValue="23"
+              class="slider"
+              id="myRange"
+            />
+          </div>
         </div>
-        <div className="square-grid" style={{ "--columns": `${GRID_COLS}` }}>
+        <div
+          className="square-grid"
+          style={{
+            "--columns": `${GRID_COLS}`,
+            "--content-width": `${this.state.width * 0.75 + "px"}`,
+          }}
+        >
           {grid.map((row, rowIdx) => {
             return row.map((node, nodeIdx) => {
               const { row, col, isStart, isEnd, isWall } = node;
