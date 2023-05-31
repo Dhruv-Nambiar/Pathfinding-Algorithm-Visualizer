@@ -7,10 +7,11 @@ import { DFSmaze } from "../algorithms/DFSmaze.jsx";
 let GRID_ROWS = 15;
 let GRID_COLS = 23;
 let CONTENT_WIDTH = "1000px";
-const START_NODE_ROW = 7;
-const START_NODE_COL = 3;
-const END_NODE_ROW = 7;
-const END_NODE_COL = 19;
+let START_NODE_ROW = 7;
+let START_NODE_COL = 3;
+let END_NODE_ROW = 7;
+let END_NODE_COL = 19;
+let SQUARE_SIZE = 50;
 const PATHFINDING_ANIMATION_SPEED = 20;
 const SHORTEST_PATH_ANIMATION_SPEED = 70;
 const MAZE_GENERATION_ANIMATION_SPEED = 40;
@@ -37,9 +38,17 @@ export default class PathfindingVisualizer extends Component {
     });
     const grid = getInitialGrid();
     this.setState({ grid });
-    GRID_ROWS = Math.round(
-      (window.innerHeight * 0.75) / ((window.innerWidth * 0.75) / GRID_COLS)
-    );
+    GRID_COLS =
+      Math.round((window.innerWidth * 0.75) / SQUARE_SIZE / 2) * 2 - 1;
+    GRID_ROWS =
+      Math.round((window.innerHeight * 0.75) / SQUARE_SIZE / 2) * 2 - 1;
+    START_NODE_COL = Math.round((GRID_COLS * 0.15) / 2) * 2 + 1;
+    START_NODE_ROW = GRID_ROWS / 2 - 0.5;
+    END_NODE_COL = GRID_COLS - START_NODE_COL - 1;
+    END_NODE_ROW = START_NODE_ROW;
+    // GRID_ROWS = Math.round(
+    //   (window.innerHeight * 0.75) / ((window.innerWidth * 0.75) / GRID_COLS)
+    // );
     window.addEventListener("resize", this.updateWindowDimensions);
   }
 
@@ -173,6 +182,15 @@ export default class PathfindingVisualizer extends Component {
 
   reset() {
     resetNodeClasses(document);
+    SQUARE_SIZE = document.getElementById("myRange").value * 10 + 10;
+    GRID_COLS =
+      Math.round(((window.innerWidth * 0.75) / SQUARE_SIZE + 1) / 4) * 4 - 1;
+    GRID_ROWS =
+      Math.round(((window.innerHeight * 0.75) / SQUARE_SIZE + 1) / 4) * 4 - 1;
+    START_NODE_COL = Math.round((GRID_COLS * 0.15) / 2) * 2 + 1;
+    START_NODE_ROW = GRID_ROWS / 2 - 0.5;
+    END_NODE_COL = GRID_COLS - START_NODE_COL - 1;
+    END_NODE_ROW = START_NODE_ROW;
     const grid = getInitialGrid();
     this.setState({ grid });
   }
@@ -261,9 +279,9 @@ export default class PathfindingVisualizer extends Component {
           <div class="slidecontainer">
             <input
               type="range"
-              min="15"
-              max="31"
-              defaultValue="23"
+              min="0"
+              max="8"
+              defaultValue="4"
               class="slider"
               id="myRange"
             />
